@@ -4,139 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ألعابي</title>
-
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f1220; color: #e8e8f0; min-height: 100vh; }
-    header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #1a1d33; border-bottom: 2px solid #6c5ce7; flex-wrap: wrap; gap: 1rem; }
-    header h1 { color: #a29bfe; }
-    #userArea { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-    button { background: #6c5ce7; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.2s; font-family: inherit; }
-    button:hover { background: #5849c9; }
-    main { padding: 2rem; max-width: 1100px; margin: auto; }
-    section { margin-bottom: 3rem; }
-    h2 { margin-bottom: 1rem; color: #a29bfe; }
-    #uploadForm { display: flex; flex-direction: column; gap: 0.8rem; max-width: 500px; background: #1a1d33; padding: 1.5rem; border-radius: 12px; }
-    #uploadForm input, #uploadForm textarea { padding: 0.7rem; border-radius: 8px; border: 1px solid #2d3154; background: #0f1220; color: white; font-family: inherit; }
-    .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
-    .game-card { background: #1a1d33; border-radius: 12px; padding: 1.2rem; border: 1px solid #2d3154; transition: 0.2s; }
-    .game-card:hover { transform: translateY(-4px); border-color: #6c5ce7; }
-    .game-card h3 { color: #a29bfe; margin-bottom: 0.5rem; }
-    .game-card p { color: #b0b0c0; font-size: 0.9rem; margin-bottom: 1rem; }
-    .game-card a { color: #74b9ff; text-decoration: none; font-weight: 600; }
-    .delete-btn { background: #d63031; padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-top: 0.6rem; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f1220; color: #fff; padding: 2rem; text-align: center; }
+    h1 { color: #a29bfe; margin-bottom: 2rem; }
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: auto; }
+    .game-card { background: #1a1d33; border-radius: 12px; padding: 1.5rem; border: 1px solid #2d3154; transition: 0.3s; }
+    .game-card:hover { transform: translateY(-5px); border-color: #6c5ce7; }
+    .game-card h2 { color: #a29bfe; margin-bottom: 0.5rem; }
+    .game-card p { color: #b0b0c0; margin-bottom: 1rem; font-size: 0.9rem; }
+    .play-btn { background: #6c5ce7; color: white; text-decoration: none; padding: 0.6rem 1.5rem; border-radius: 8px; display: inline-block; font-weight: bold; }
+    .play-btn:hover { background: #5849c9; }
   </style>
 </head>
 <body>
-  <header><h1>🎮 ألعابي</h1><div id="userArea"></div></header>
-  <main>
-    <section id="uploadSection" style="display:none">
-      <h2>➕ ارفع لعبة جديدة</h2>
-      <form id="uploadForm">
-        <input type="text" id="gameName" placeholder="اسم اللعبة" required>
-        <input type="url" id="gameUrl" placeholder="رابط اللعبة (Itch.io, HTML5, ...)">
-        <textarea id="gameDesc" placeholder="وصف اللعبة" rows="3"></textarea>
-        <button type="submit">نشر اللعبة</button>
-      </form>
-    </section>
-    <section id="gamesSection">
-      <h2>🕹️ الألعاب المتاحة</h2>
-      <div id="gamesList" class="games-grid">جاري التحميل...</div>
-    </section>
-  </main>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <h1>🎮 ألعابي</h1>
 
-    // إعدادات Firebase بتاعتك
-    const firebaseConfig = {
-      apiKey: "AIzaSyDTWE-jy2b0Wtfi24jNlEtMGuk_4ZrZM",
-      authDomain: "wnuo-b5c60.firebaseapp.com",
-      projectId: "wnuo-b5c60",
-      storageBucket: "wnuo-b5c60.firebasestorage.app",
-      messagingSenderId: "62004023551",
-      appId: "1:62004023551:web:61851ec6b3b51028beca",
-      measurementId: "G-JGB5LM9C09"
-    };
+  <div class="games-grid">
+    
+    <!-- ========================================== -->
+    <!-- هنا هتحط لعبة جديدة. انسخ الجزء ده وعدل عليه -->
+    <!-- ========================================== -->
+    <div class="game-card">
+      <h2>الغاز مرعبه</h2>
+      <p>جواب على 30 سؤال مرعب</p>
+      <!-- حط اللينك بتاع اللعبة اللي نسخته من جيت هاب هنا 👇 -->
+      <a href="ضع_اللينك_هنا" target="_blank" class="play-btn">▶ العب الآن</a>
+    </div>
+    <!-- ========================================== -->
 
-    const ADMIN_EMAIL = "wnuo858@gmail.com";
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-    let currentUser = null;
+  </div>
 
-    window.login = async () => { try { await signInWithPopup(auth, provider); } catch (err) { alert(err.message); } };
-    window.logout = async () => { await signOut(auth); };
-
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      const userArea = document.getElementById("userArea");
-      const uploadSection = document.getElementById("uploadSection");
-      if (user) {
-        const isAdmin = user.email === ADMIN_EMAIL;
-        userArea.innerHTML = `<span>${user.displayName || user.email}</span>${isAdmin ? '<span style="color:#00b894">✔ مسؤول</span>' : ''}<button onclick="logout()">تسجيل خروج</button>`;
-        uploadSection.style.display = isAdmin ? "block" : "none";
-      } else {
-        userArea.innerHTML = `<button onclick="login()">تسجيل الدخول بـ Google</button>`;
-        uploadSection.style.display = "none";
-      }
-      loadGames();
-    });
-
-    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!currentUser || currentUser.email !== ADMIN_EMAIL) return alert("❌ غير مسموح");
-      
-      const name = document.getElementById("gameName").value.trim();
-      const url  = document.getElementById("gameUrl").value.trim();
-      const desc = document.getElementById("gameDesc").value.trim();
-      
-      if (!name || !url) return alert("اكتب الاسم والرابط");
-
-      try {
-        await addDoc(collection(db, "games"), { name, url, description: desc, owner: currentUser.email, createdAt: serverTimestamp() });
-        document.getElementById("uploadForm").reset();
-        loadGames();
-        alert("✅ تم النشر!");
-      } catch (err) { alert("خطأ: " + err.message); }
-    });
-
-    async function loadGames() {
-      const list = document.getElementById("gamesList");
-      list.innerHTML = "جاري التحميل...";
-      try {
-        const q = query(collection(db, "games"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        list.innerHTML = snap.empty ? "<p>لا توجد ألعاب.</p>" : "";
-        
-        snap.forEach((docSnap) => {
-          const g = docSnap.data();
-          const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
-          const card = document.createElement("div");
-          card.className = "game-card";
-          card.innerHTML = `
-            <h3>${escapeHtml(g.name)}</h3>
-            <p>${escapeHtml(g.description || "لا يوجد وصف")}</p>
-            <a href="${g.url}" target="_blank" rel="noopener">▶ العب الآن</a>
-            ${isAdmin ? `<br><button class="delete-btn" data-id="${docSnap.id}">🗑 حذف</button>` : ''}
-          `;
-          list.appendChild(card);
-        });
-
-        document.querySelectorAll(".delete-btn").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            if (!confirm("متأكد؟")) return;
-            await deleteDoc(doc(db, "games", btn.dataset.id));
-            loadGames();
-          });
-        });
-      } catch (err) { list.innerHTML = "<p>خطأ: " + err.message + "</p>"; }
-    }
-
-    function escapeHtml(str) { const div = document.createElement("div"); div.textContent = str; return div.innerHTML; }
-  </script>
 </body>
 </html>
