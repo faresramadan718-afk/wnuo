@@ -1,295 +1,890 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ألعابي</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>💀 الغاز الرعب</title>
+    <style>
+       /* ===== إعادة التعيين ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: #0f1220;
-      color: #e8e8f0;
-      min-height: 100vh;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      background: #1a1d33;
-      border-bottom: 2px solid #6c5ce7;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    header h1 { color: #a29bfe; }
-    #userArea { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-    button {
-      background: #6c5ce7;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: 0.2s;
-      font-family: inherit;
-    }
-    button:hover { background: #5849c9; }
-    main { padding: 2rem; max-width: 1100px; margin: auto; }
-    section { margin-bottom: 3rem; }
-    h2 { margin-bottom: 1rem; color: #a29bfe; }
+/* ===== الحركات (Animations) ===== */
+@keyframes flashRed {
+    0%, 100% { background: #000; }
+    25% { background: #1a0000; }
+    50% { background: #2a0000; }
+    75% { background: #1a0000; }
+}
 
-    #uploadForm {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      max-width: 500px;
-      background: #1a1d33;
-      padding: 1.5rem;
-      border-radius: 12px;
-    }
-    #uploadForm input, #uploadForm textarea {
-      padding: 0.7rem;
-      border-radius: 8px;
-      border: 1px solid #2d3154;
-      background: #0f1220;
-      color: white;
-      font-family: inherit;
-    }
-    #uploadForm small { color: #888; font-size: 0.85rem; }
+@keyframes intenseShake {
+    0%, 100% { transform: translate(0) rotate(0deg); }
+    10% { transform: translate(-20px, -15px) rotate(-3deg); }
+    20% { transform: translate(20px, 15px) rotate(3deg); }
+    30% { transform: translate(-15px, 20px) rotate(-2deg); }
+    40% { transform: translate(15px, -20px) rotate(2deg); }
+    50% { transform: translate(-12px, -8px) rotate(-4deg); }
+    60% { transform: translate(12px, 8px) rotate(4deg); }
+    70% { transform: translate(-8px, 12px) rotate(-2deg); }
+    80% { transform: translate(8px, -12px) rotate(2deg); }
+    90% { transform: translate(-5px, -5px) rotate(-3deg); }
+}
 
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.2rem;
+@keyframes glitchEffect {
+    0% { clip-path: inset(0 0 0 0); }
+    10% { clip-path: inset(20% 0 60% 0); }
+    20% { clip-path: inset(50% 0 10% 0); }
+    30% { clip-path: inset(10% 0 70% 0); }
+    40% { clip-path: inset(80% 0 5% 0); }
+    50% { clip-path: inset(30% 0 40% 0); }
+    60% { clip-path: inset(70% 0 15% 0); }
+    70% { clip-path: inset(15% 0 65% 0); }
+    80% { clip-path: inset(45% 0 25% 0); }
+    90% { clip-path: inset(5% 0 85% 0); }
+    100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes textGlitch {
+    0% { transform: translate(0); text-shadow: 8px 0 red, -8px 0 blue; }
+    25% { transform: translate(-8px, 8px); text-shadow: -8px 0 red, 8px 0 blue; }
+    50% { transform: translate(8px, -8px); text-shadow: 8px 0 red, -8px 0 blue; }
+    75% { transform: translate(-5px, 5px); text-shadow: -5px 0 red, 5px 0 blue; }
+    100% { transform: translate(0); text-shadow: 8px 0 red, -8px 0 blue; }
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14% { transform: scale(1.15); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.2); }
+    70% { transform: scale(1); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 80px rgba(255, 0, 0, 0.5); }
+    50% { box-shadow: 0 0 150px rgba(255, 0, 0, 0.8); }
+}
+
+@keyframes jumpScare {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    50% { transform: scale(2) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 0; }
+}
+
+/* ===== الصفحة ===== */
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    color: #ff0000;
+    font-family: 'Courier New', monospace;
+    animation: flashRed 0.2s infinite;
+}
+
+/* ===== طبقات الرعب ===== */
+.layer-blood, .layer-scanlines, .layer-vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+}
+.layer-blood {
+    background: radial-gradient(circle at center, transparent 0%, rgba(180, 0, 0, 0.15) 100%);
+}
+.layer-scanlines {
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.4) 2px, rgba(0, 0, 0, 0.4) 4px);
+    z-index: 1;
+    animation: glitchEffect 0.05s infinite;
+}
+.layer-vignette {
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.9) 100%);
+    z-index: 1;
+}
+
+/* ===== الحاوية الرئيسية ===== */
+.container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    border: 5px solid #ff0000;
+    box-shadow: 0 0 150px rgba(255, 0, 0, 0.4), inset 0 0 150px rgba(255, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3vh 4vw;
+    z-index: 2;
+    animation: 
+    backdrop-filter: blur(8px);
+    overflow-y: auto;
+}
+
+.container::before {
+    content: '☠️☠️☠️';
+    position: absolute;
+    top: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3vw;
+    color: red;
+    animation: textGlitch 0.15s infinite;
+    text-shadow: 0 0 50px red;
+    white-space: nowrap;
+}
+
+/* ===== الهيدر ===== */
+.header {
+    text-align: center;
+    margin-bottom: 1.5vh;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+.header h1 {
+    color: #ff0000;
+    font-size: clamp(2rem, 6vw, 4rem);
+    animation: textGlitch 0.2s infinite;
+    text-transform: uppercase;
+    letter-spacing: 1vw;
+    text-shadow: 0 0 50px red, 0 0 100px red;
+    font-weight: 900;
+    margin: 0;
+}
+.header .sub {
+    color: #ff3333;
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+    margin-top: 0.5vh;
+    animation: blink 0.2s infinite;
+}
+
+/* ===== الأيقونة ===== */
+.virus-icon {
+    font-size: clamp(4rem, 12vw, 8rem);
+    text-align: center;
+    margin: 0.5vh 0;
+    animation: glitchEffect 0.1s infinite, heartbeat 0.7s infinite;
+    filter: drop-shadow(0 0 50px red);
+    flex-shrink: 0;
+}
+
+/* ===== شاشة البداية ===== */
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.97);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: flashRed 0.5s infinite;
+}
+.start-screen h1 {
+    font-size: clamp(3rem, 10vw, 6rem);
+    color: #ff0000;
+    text-shadow: 0 0 80px red;
+    animation: textGlitch 0.2s infinite;
+    margin-bottom: 2vh;
+}
+.start-screen p {
+    color: #ff6666;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    margin: 1vh 0;
+    animation: blink 1s infinite;
+}
+.start-btn {
+    background: #ff0000;
+    color: #fff;
+    border: none;
+    padding: clamp(15px, 3vh, 25px) clamp(40px, 8vw, 60px);
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    border-radius: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    animation: pulse 1s infinite, heartbeat 1s infinite;
+    margin-top: 3vh;
+    transition: 0.3s;
+}
+.start-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ===== منطقة الأسئلة ===== */
+.question-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1vh 0;
+    min-height: 40vh;
+}
+.question-text {
+    color: #ffcccc;
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    text-align: center;
+    margin-bottom: 2vh;
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    line-height: 1.6;
+    padding: 0 2vw;
+}
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5vh 2vw;
+    margin: 1vh 0;
+}
+.option-btn {
+    background: rgba(60, 20, 20, 0.6);
+    color: #ddbbbb;
+    border: 2px solid rgba(180, 50, 50, 0.3);
+    padding: clamp(10px, 2vh, 18px);
+    border-radius: 12px;
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: inherit;
+    text-align: center;
+}
+.option-btn:hover:not(:disabled) {
+    background: rgba(120, 30, 30, 0.8);
+    border-color: #ff3333;
+    transform: scale(1.03);
+}
+.option-btn.correct {
+    background: rgba(0, 200, 50, 0.3);
+    border-color: #00ff44;
+    animation: pulse 0.3s;
+}
+.option-btn.wrong {
+    background: rgba(200, 0, 0, 0.4);
+    border-color: #ff0000;
+    animation: intenseShake 0.3s;
+}
+.option-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== التقدم والنتيجة ===== */
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    color: #886666;
+    font-size: clamp(0.7rem, 1.2vw, 1rem);
+    margin: 1vh 0;
+    flex-shrink: 0;
+}
+.progress-info span {
+    color: #ff4444;
+}
+.score-display {
+    text-align: center;
+    color: #ffd700;
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    margin: 1vh 0;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    flex-shrink: 0;
+}
+
+/* ===== الأزرار ===== */
+.buttons {
+    display: flex;
+    gap: 2vw;
+    justify-content: center;
+    margin: 1.5vh 0;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+.buttons button {
+    padding: clamp(10px, 1.5vh, 18px) clamp(20px, 4vw, 40px);
+    border: none;
+    border-radius: 12px;
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.btn-panic {
+    background: #ff0000;
+    color: #fff;
+    box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+    animation: pulse 1s infinite;
+}
+.btn-panic:hover {
+    transform: scale(1.05);
+}
+.btn-reset {
+    background: #1a0000;
+    color: #660000;
+    border: 2px solid #330000;
+}
+.btn-reset:hover {
+    background: #2a0000;
+    color: #880000;
+}
+
+/* ===== القفزات المفاجئة ===== */
+.jumpscare {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.9);
+    animation: flashRed 0.05s infinite;
+}
+.jumpscare.active {
+    display: flex;
+    animation: intenseShake 0.1s infinite;
+}
+.jumpscare .scary-face {
+    font-size: clamp(10rem, 40vw, 30rem);
+    animation: jumpScare 0.5s ease-out;
+    text-shadow: 0 0 100px red;
+}
+.jumpscare .scary-text {
+    position: absolute;
+    bottom: 10vh;
+    color: #ff0000;
+    font-size: clamp(2rem, 5vw, 4rem);
+    animation: blink 0.05s infinite;
+    text-shadow: 0 0 50px red;
+}
+
+/* ===== شاشة النتيجة ===== */
+.result-screen {
+    text-align: center;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.result-screen.active {
+    display: flex;
+}
+.result-screen .big-emoji {
+    font-size: clamp(5rem, 15vw, 10rem);
+    margin: 2vh 0;
+}
+.result-screen h2 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #ffd700;
+    text-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+    margin: 1vh 0;
+}
+.result-screen .final-score {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    color: #ff6666;
+    margin: 1vh 0;
+}
+.result-screen .virus-trigger {
+    color: #ff0000;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    animation: blink 0.3s infinite;
+    margin: 2vh 0;
+    padding: 2vh 3vw;
+    border: 2px solid red;
+    border-radius: 15px;
+    background: rgba(255, 0, 0, 0.05);
+}
+
+/* ===== التجاوب ===== */
+@media (max-width: 600px) {
+    .container {
+        padding: 2vh 3vw;
     }
-    .game-card {
-      background: #1a1d33;
-      border-radius: 12px;
-      padding: 1.2rem;
-      border: 1px solid #2d3154;
-      transition: 0.2s;
+    .options-grid {
+        grid-template-columns: 1fr;
+        gap: 1vh;
     }
-    .game-card:hover { transform: translateY(-4px); border-color: #6c5ce7; }
-    .game-card h3 { color: #a29bfe; margin-bottom: 0.5rem; }
-    .game-card p { color: #b0b0c0; font-size: 0.9rem; margin-bottom: 1rem; }
-    .game-card a { color: #74b9ff; text-decoration: none; font-weight: 600; }
-    .delete-btn {
-      background: #d63031;
-      padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
-      margin-top: 0.6rem;
+    .header h1 {
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
     }
-    .delete-btn:hover { background: #b02020; }
-  </style>
+    .buttons button {
+        padding: 10px 15px;
+        font-size: 0.8rem;
+    }
+    .question-text {
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    }
+    .option-btn {
+        font-size: clamp(0.8rem, 2vw, 1rem);
+        padding: 12px;
+    }
+}
+
+@media (pointer: coarse) {
+    .option-btn {
+        padding: 15px 10px;
+    }
+    .buttons button {
+        padding: 15px 20px;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 0;
+} /* CSS هنا */
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1>🎮 ألعابي</h1>
-    <div id="userArea"></div>
-  </header>
+<!-- ===== طبقات الرعب ===== -->
+<div class="layer-blood"></div>
+<div class="layer-scanlines"></div>
+<div class="layer-vignette"></div>
 
-  <main>
-    <section id="uploadSection" style="display:none">
-      <h2>➕ ارفع لعبة جديدة</h2>
-      <form id="uploadForm">
-        <input type="text" id="gameName" placeholder="اسم اللعبة" required>
-        <input type="url" id="gameUrl" placeholder="رابط اللعبة (اختياري لو رفعت ملف)">
-        <textarea id="gameDesc" placeholder="وصف اللعبة" rows="3"></textarea>
-        
-        <!-- هنا هنرفع الملف مباشرة -->
-        <label for="gameFile" style="color:#a29bfe; font-weight:bold;">اختر ملف اللعبة (HTML فقط):</label>
-        <input type="file" id="gameFile" accept=".html">
-        
-        <button type="submit">نشر اللعبة</button>
-      </form>
-    </section>
+<!-- ===== شاشة البداية ===== -->
+<div class="start-screen" id="startScreen">
+    <h1>💀 الغاز الرعب</h1>
+    <p>⚠️ 30 سؤال مرعب ⚠️</p>
+    <p style="font-size:0.8em; color:#883333;">⚰️ إجاوبة صح ولا هتواجه الكابوس ⚰️</p>
+    <button class="start-btn" onclick="startGame()">🎮 ابدأ الرعب</button>
+    <p style="color:#441111; font-size:0.7em; margin-top:3vh;">💀 أنت محذر... 💀</p>
+</div>
 
-    <section id="gamesSection">
-      <h2>🕹️ الألعاب المتاحة</h2>
-      <div id="gamesList" class="games-grid">جاري التحميل...</div>
-    </section>
-  </main>
+<!-- ===== القفزات المفاجئة ===== -->
+<div class="jumpscare" id="jumpscare">
+    <div class="scary-face" id="scaryFace">👹</div>
+    <div class="scary-text" id="scaryText">💀 أنت ميت! 💀</div>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, deleteDoc, doc,
-      query, orderBy, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<!-- ===== الحاوية الرئيسية ===== -->
+<div class="container" id="mainContainer" style="display:none;">
+    
+    <!-- الهيدر -->
+    <div class="header">
+        <h1>⚠️ فيروس الشبح</h1>
+        <div class="sub">🔴 أجب صح وإلا... 🔴</div>
+    </div>
 
-    // ⚠️⚠️⚠️ إعدادات Firebase بتاعتك (متغيرةاش) ⚠️⚠️⚠️
-    const firebaseConfig = {
-      apiKey: "AIzaSyDTWE-jy2b0Wtfi24jNlEtMGuk_4ZrZM",
-      authDomain: "wnuo-b5c60.firebaseapp.com",
-      projectId: "wnuo-b5c60",
-      storageBucket: "wnuo-b5c60.firebasestorage.app",
-      messagingSenderId: "62004023551",
-      appId: "1:62004023551:web:61851ec6b3b51028beca",
-      measurementId: "G-JGB5LM9C09"
+    <!-- الأيقونة -->
+    <div class="virus-icon" id="virusIcon">👾</div>
+
+    <!-- منطقة الأسئلة -->
+    <div class="question-area" id="questionArea">
+        <div class="progress-info">
+            <span>📌 السؤال: <span id="questionNum">1</span>/30</span>
+            <span>✅ الصح: <span id="correctCount">0</span> | ❌ الغلط: <span id="wrongCount">0</span></span>
+        </div>
+
+        <div class="question-text" id="questionText">السؤال هنا...</div>
+
+        <div class="options-grid" id="optionsGrid">
+            <button class="option-btn" onclick="selectAnswer(0)">خيار 1</button>
+            <button class="option-btn" onclick="selectAnswer(1)">خيار 2</button>
+            <button class="option-btn" onclick="selectAnswer(2)">خيار 3</button>
+            <button class="option-btn" onclick="selectAnswer(3)">خيار 4</button>
+        </div>
+
+        <div class="score-display" id="scoreDisplay">⭐ النقاط: 0</div>
+    </div>
+
+    <!-- شاشة النتيجة -->
+    <div class="result-screen" id="resultScreen">
+        <div class="big-emoji" id="resultEmoji">🎉</div>
+        <h2 id="resultTitle">انتهت اللعبة!</h2>
+        <div class="final-score" id="finalScore">⭐ النقاط: 0</div>
+        <div class="final-score" style="color:#ff8888;">✅ صح: <span id="finalCorrect">0</span> | ❌ غلط: <span id="finalWrong">0</span></div>
+        <div class="virus-trigger" id="virusTrigger" style="display:none;">
+            💀💀💀 الأخطاء أكثر من الصح! 💀💀💀<br>
+            <span style="font-size:0.7em;">🔥 فيروس الشبح سيتم إطلاقه! 🔥</span>
+        </div>
+        <div class="buttons" style="margin-top:2vh;">
+            <button class="btn-panic" onclick="resetGame()">🔄 لعب مرة أخرى</button>
+        </div>
+    </div>
+
+    <!-- الأزرار -->
+    <div class="buttons">
+        <button class="btn-reset" onclick="resetGame()">🔄 إعادة التشغيل</button>
+    </div>
+
+    <div class="hidden-message" style="color:#1a0000; font-size:0.6em; text-align:center; opacity:0.2; margin-top:1vh;">
+        💀 مجرد لعبة - لا يوجد فيروس حقيقي!
+    </div>
+</div>
+
+<script>
+   // ============================================
+//  نظام الصوت - اصوات مرعبة
+// ============================================
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new AudioContext();
+    }
+}
+
+function playScarySound(type) {
+    try {
+        initAudio();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (type === 'wrong') {
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.5);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        } else if (type === 'correct') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523, audioCtx.currentTime);
+            oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'jumpscare') {
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.8);
+            gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.8);
+        } else if (type === 'gameover') {
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 1.5);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.5);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 1.5);
+        }
+    } catch(e) {
+        console.log('صوت مش شغال');
+    }
+} /* JavaScript هنا */
+// ============================================
+//  الأسئلة (30 سؤال مرعب)
+// ============================================
+const questions = [
+    // اسئلة رعب 1-10
+    { q: "في منزل مهجور، تسمع صوت بكاء من الطابق العلوي. ماذا تفعل؟", o: ["أصعد لأرى", "أهرب", "أتصل بالشرطة", "أشغل موسيقى"], a: 1 },
+    { q: "ما هو الشيء الذي يظهر في المرآة ولا يظهر في الحقيقة؟", o: ["الظل", "الانعكاس", "الشبح", "الضوء"], a: 2 },
+    { q: "إذا سمعت طرقاً على الباب في منتصف الليل ولا أحد هناك، ماذا تفعل؟", o: ["أفتح الباب", "أنظر من الشباك", "أتجاهل", "أصرخ"], a: 2 },
+    { q: "ما هو الشيء الذي يمشي دون قدمين ويطير دون أجنحة؟", o: ["الريح", "الشبح", "الوقت", "الظلام"], a: 2 },
+    { q: "في غرفة مظلمة، تشعر بأن هناك من يلمس كتفك. ماذا تفعل؟", o: ["ألتفت بسرعة", "أركض", "أشغل النور", "أصرخ"], a: 2 },
+    { q: "ما هو الشيء الذي كلما أخذت منه كبر؟", o: ["العلم", "النار", "الحفرة", "الظل"], a: 2 },
+    { q: "إذا رأيت شبحاً في غرفة نومك، ماذا تفعل؟", o: ["أصوره", "أهرب", "أتحداه", "أشغل القرآن"], a: 3 },
+    { q: "ما هو الشيء الذي له عين ولا يرى؟", o: ["الإبرة", "القمر", "النهر", "الطريق"], a: 0 },
+    { q: "في المقبرة ليلاً، تسمع صوتاً يناديك باسمك. ماذا تفعل؟", o: ["أرد", "أهرب", "أتجاهل", "أبحث عن المصدر"], a: 2 },
+    { q: "ما هو الشيء الذي يدخل مبلولاً ويخرج يابساً؟", o: ["المنشفة", "الخبز", "الملح", "الماء"], a: 1 },
+    // اسئلة رعب 11-20
+    { q: "إذا انطفأت الأنوار فجأة وسمعت همسات، ماذا تفعل؟", o: ["أشعل ولاعة", "أجلس مكاني", "أصرخ", "أبحث عن مخرج"], a: 0 },
+    { q: "ما هو الشيء الذي يقرصك ولا تراه؟", o: ["النملة", "البرد", "الجوع", "الهواء"], a: 2 },
+    { q: "في بيت مسكون، تجد باباً مغلقاً يخرج منه نور. ماذا تفعل؟", o: ["أفتحه", "أهرب", "أنظر من تحت الباب", "أتصل بأحد"], a: 2 },
+    { q: "ما هو الشيء الذي ينام ولا يستيقظ؟", o: ["الميت", "الطفل", "القط", "الشجرة"], a: 0 },
+    { q: "إذا رأيت دماء على الحائط في منزلك، ماذا تفعل؟", o: ["أتجاهل", "ألمسها", "أهرب", "أتصل بالشرطة"], a: 3 },
+    { q: "ما هو الشيء الذي يزيد كلما نقص؟", o: ["العمر", "الماء", "الوقت", "الموت"], a: 0 },
+    { q: "في الغابة ليلاً، ترى عيوناً حمراء في الظلام. ماذا تفعل؟", o: ["أقترب", "أهرب", "أشعل ناراً", "أصرخ"], a: 2 },
+    { q: "ما هو الشيء الذي يأكل ولا يشبع؟", o: ["النار", "الموت", "الظلام", "الوقت"], a: 0 },
+    { q: "إذا سمعت صوت أظافر على الزجاج، ماذا تفعل؟", o: ["أتجاهل", "أشغل التلفاز", "أبحث عن المصدر", "أهرب"], a: 2 },
+    { q: "ما هو الشيء الذي يعيش بلا روح؟", o: ["الحجر", "الشبح", "الروبوت", "الدمية"], a: 3 },
+    // اسئلة رعب 21-30
+    { q: "في منزل جدي، تجد صورة قديمة تشبهك. ماذا تفعل؟", o: ["أتجاهلها", "أحرقها", "أسأل عنها", "أهرب"], a: 2 },
+    { q: "ما هو الشيء الذي يحملك ولا تحمله؟", o: ["الطريق", "السيارة", "الموت", "النوم"], a: 0 },
+    { q: "إذا سمعت طفلاً يبكي في منزل مهجور، ماذا تفعل؟", o: ["أبحث عنه", "أهرب", "أتصل بالنجدة", "أتجاهل"], a: 0 },
+    { q: "ما هو الشيء الذي له يد ولا يمسك؟", o: ["الساعة", "القمر", "الطريق", "النهر"], a: 0 },
+    { q: "في غرفة مغلقة، تشعر بأن الهواء يقل. ماذا تفعل؟", o: ["أكسر الباب", "أنتظر", "أصرخ", "أبحث عن مخرج"], a: 3 },
+    { q: "ما هو الشيء الذي يكتب ولا يقرأ؟", o: ["القلم", "الكتاب", "الرسام", "المعلم"], a: 0 },
+    { q: "إذا رأيت ظلاً يتحرك دون مصدر، ماذا تفعل؟", o: ["أصوره", "أهرب", "أتحداه", "أشغل النور"], a: 3 },
+    { q: "ما هو الشيء الذي يسمع بلا أذن؟", o: ["القلب", "الروح", "الموت", "الزمن"], a: 0 },
+    { q: "في القبر، تسمع صوتاً يقرأ اسمك. ماذا تفعل؟", o: ["أرد", "أهرب", "أتجاهل", "أبحث"], a: 2 },
+    { q: "ما هو الشيء الذي يخاف من الظلام؟", o: ["الطفل", "الشبح", "النار", "الضوء"], a: 0 }
+];
+// ============================================
+//  متغيرات اللعبة
+// ============================================
+let currentQuestion = 0;
+let score = 0;
+let correctAnswers = 0;
+let wrongAnswers = 0;
+let isAnswered = false;
+let gameActive = false;
+let wrongCount = 0;
+
+// عناصر DOM
+const questionText = document.getElementById('questionText');
+const optionsGrid = document.getElementById('optionsGrid');
+const questionNum = document.getElementById('questionNum');
+const correctCountEl = document.getElementById('correctCount');
+const wrongCountEl = document.getElementById('wrongCount');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const resultScreen = document.getElementById('resultScreen');
+const questionArea = document.getElementById('questionArea');
+const mainContainer = document.getElementById('mainContainer');
+const startScreen = document.getElementById('startScreen');
+const jumpscare = document.getElementById('jumpscare');
+const virusIcon = document.getElementById('virusIcon');
+
+// ============================================
+//  وظائف الصور (ايموجي بدل الصور)
+// ============================================
+function getScaryImage(type) {
+    const images = {
+        'ghost': '👻',
+        'skull': '💀',
+        'demon': '👹',
+        'zombie': '🧟',
+        'vampire': '🧛',
+        'spider': '🕷️',
+        'moon': '🌙',
+        'knife': '🔪',
+        'fire': '🔥',
+        'storm': '⚡'
     };
+    return images[type] || '👾';
+}
+// ============================================
+//  عرض السؤال
+// ============================================
+function showQuestion(index) {
+    if (index >= questions.length) {
+        endGame();
+        return;
+    }
 
-    const ADMIN_EMAIL = "wnuo858@gmail.com";
+    isAnswered = false;
+    const q = questions[index];
+    questionText.textContent = q.q;
+    questionNum.textContent = index + 1;
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+    const buttons = optionsGrid.querySelectorAll('.option-btn');
+    buttons.forEach((btn, i) => {
+        btn.textContent = q.o[i];
+        btn.className = 'option-btn';
+        btn.disabled = false;
+        btn.style.display = 'block';
+    });
 
-    let currentUser = null;
+    // تغيير الأيقونة
+    const emojis = ['👾', '💀', '☠️', '👻', '👹', '💣', '🔪', '🔥', '⚡'];
+    virusIcon.textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
-    window.login = async () => {
-      try { await signInWithPopup(auth, provider); } 
-      catch (err) { alert("فشل تسجيل الدخول: " + err.message); }
-    };
+    updateStats();
+}
+// ============================================
+//  اختيار الإجابة
+// ============================================
+function selectAnswer(selected) {
+    if (isAnswered || !gameActive) return;
+    isAnswered = true;
 
-    window.logout = async () => { await signOut(auth); };
+    const q = questions[currentQuestion];
+    const buttons = optionsGrid.querySelectorAll('.option-btn');
+    buttons.forEach(btn => btn.disabled = true);
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      const userArea = document.getElementById("userArea");
-      const uploadSection = document.getElementById("uploadSection");
+    if (selected === q.a) {
+        buttons[selected].classList.add('correct');
+        score += 10;
+        correctAnswers++;
+        playScarySound('correct');
+        virusIcon.textContent = '⭐';
+        setTimeout(() => {
+            virusIcon.textContent = getScaryImage('ghost');
+        }, 300);
+    } else {
+        buttons[selected].classList.add('wrong');
+        buttons[q.a].classList.add('correct');
+        wrongAnswers++;
+        wrongCount++;
+        playScarySound('wrong');
+        
+        // اهتزاز
+        
+     
+        
+        // قفزة مفاجئة كل خطأين
+        if (wrongAnswers > 0 && wrongAnswers % 2 === 0) {
+            setTimeout(() => triggerJumpscare(), 400);
+        }
+    }
 
-      if (user) {
-        const isAdmin = user.email === ADMIN_EMAIL;
-        userArea.innerHTML = `
-          <span>${user.displayName || user.email}</span>
-          ${isAdmin ? '<span style="color:#00b894">✔ مسؤول</span>' : ''}
-          <button onclick="logout()">تسجيل خروج</button>
+    updateStats();
+    scoreDisplay.textContent = `⭐ النقاط: ${score}`;
+
+    // الانتقال للسؤال التالي بعد 1.5 ثانية
+    setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            showQuestion(currentQuestion);
+        } else {
+            endGame();
+        }
+    }, 1500);
+}
+
+// ============================================
+//  تحديث الإحصائيات
+// ============================================
+function updateStats() {
+    correctCountEl.textContent = correctAnswers;
+    wrongCountEl.textContent = wrongAnswers;
+}
+// ============================================
+//  القفزات المفاجئة
+// ============================================
+function triggerJumpscare() {
+    playScarySound('jumpscare');
+    const faces = ['👹', '💀', '☠️', '👻', '🧟', '🧛', '🦇', '🔪'];
+    document.getElementById('scaryFace').textContent = faces[Math.floor(Math.random() * faces.length)];
+    
+    const texts = ['💀 أنت ميت!', '👻 بوك!', '🔥 احترقت!', '⚡ صعقة!', '🔪 قطع!'];
+    document.getElementById('scaryText').textContent = texts[Math.floor(Math.random() * texts.length)];
+    
+    jumpscare.classList.add('active');
+    jumpscare.style.animation = 'intenseShake 0.05s infinite';
+    
+    setTimeout(() => {
+        jumpscare.classList.remove('active');
+        jumpscare.style.animation = '';
+    }, 1500);
+}
+// ============================================
+//  نهاية اللعبة
+// ============================================
+function endGame() {
+    gameActive = false;
+    questionArea.style.display = 'none';
+    resultScreen.classList.add('active');
+
+    document.getElementById('finalScore').textContent = `⭐ النقاط: ${score}`;
+    document.getElementById('finalCorrect').textContent = correctAnswers;
+    document.getElementById('finalWrong').textContent = wrongAnswers;
+
+    let emoji, title;
+    if (correctAnswers > wrongAnswers) {
+        emoji = '🎉';
+        title = 'نجوت! أنت بطل!';
+        document.getElementById('resultEmoji').textContent = '🏆';
+    } else if (correctAnswers === wrongAnswers) {
+        emoji = '😅';
+        title = 'تعادل... كادت أن تكون نهايتك!';
+        document.getElementById('resultEmoji').textContent = '😰';
+    } else {
+        emoji = '💀';
+        title = 'لقد مت! الأخطاء أكثر من الصح!';
+        document.getElementById('resultEmoji').textContent = '💀';
+        
+        // تفعيل الفيروس
+        document.getElementById('virusTrigger').style.display = 'block';
+        document.getElementById('virusTrigger').innerHTML = `
+            💀💀💀 الأخطاء أكثر من الصح! 💀💀💀<br>
+            <span style="font-size:0.7em;">🔥 يتم إطلاق فيروس الشبح! 🔥</span>
+            <div style="margin-top:1vh; font-size:2em;">👾💀☠️👹</div>
         `;
-        uploadSection.style.display = isAdmin ? "block" : "none";
-      } else {
-        userArea.innerHTML = `<button onclick="login()">تسجيل الدخول بـ Google</button>`;
-        uploadSection.style.display = "none";
-      }
-      loadGames();
-    });
-
-    // ============================================
-    //  الرفع الجديد: بيحول ملف الـ HTML لنص ويحفظه
-    // ============================================
-    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
-        alert("❌ غير مسموح لك برفع الألعاب");
-        return;
-      }
-
-      const name = document.getElementById("gameName").value.trim();
-      const url  = document.getElementById("gameUrl").value.trim();
-      const desc = document.getElementById("gameDesc").value.trim();
-      const file = document.getElementById("gameFile").files[0];
-
-      if (!name) {
-        alert("اكتب اسم اللعبة");
-        return;
-      }
-
-      let finalUrl = url;
-      let fileContent = null;
-
-      // لو المستخدم اختار ملف، بنقراه كـ نص
-      if (file) {
-        try {
-          fileContent = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.onerror = (e) => reject(e);
-            reader.readAsText(file);
-          });
-        } catch (err) {
-          alert("فشل في قراءة الملف: " + err.message);
-          return;
-        }
-      }
-
-      if (!finalUrl && !fileContent) {
-        alert("حط رابط أو اختار ملف");
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, "games"), {
-          name,
-          url: finalUrl,
-          htmlContent: fileContent, // ده اللي هيخلي اللعبة تشتغل
-          description: desc,
-          owner: currentUser.email,
-          createdAt: serverTimestamp()
-        });
-
-        document.getElementById("uploadForm").reset();
-        loadGames();
-        alert("✅ تم نشر اللعبة بنجاح!");
-      } catch (err) {
-        alert("حدث خطأ أثناء النشر: " + err.message);
-      }
-    });
-
-    // ============================================
-    //  عرض الألعاب
-    // ============================================
-    async function loadGames() {
-      const list = document.getElementById("gamesList");
-      list.innerHTML = "جاري التحميل...";
-
-      try {
-        const q = query(collection(db, "games"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        list.innerHTML = "";
-
-        if (snap.empty) {
-          list.innerHTML = "<p>لا توجد ألعاب بعد.</p>";
-          return;
-        }
-
-        snap.forEach((docSnap) => {
-          const g = docSnap.data();
-          const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
-          const card = document.createElement("div");
-          card.className = "game-card";
-          
-          // لو اللعبة مرفوعة كملف، بنفتحها في صفحة جديدة
-          let playLink = g.url;
-          if (g.htmlContent) {
-             // بنحول النص لملف ونشغله
-             const blob = new Blob([g.htmlContent], { type: 'text/html' });
-             playLink = URL.createObjectURL(blob);
-          }
-
-          card.innerHTML = `
-            <h3>${escapeHtml(g.name)}</h3>
-            <p>${escapeHtml(g.description || "لا يوجد وصف")}</p>
-            ${playLink ? `<a href="${playLink}" target="_blank" rel="noopener">▶ العب الآن</a>` : '<span style="color:red">الملف مش موجود</span>'}
-            ${isAdmin ? `<br><button class="delete-btn" data-id="${docSnap.id}">🗑 حذف</button>` : ''}
-          `;
-          list.appendChild(card);
-        });
-
-        document.querySelectorAll(".delete-btn").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            if (!confirm("متأكد من حذف اللعبة؟")) return;
-            await deleteDoc(doc(db, "games", btn.dataset.id));
-            loadGames();
-          });
-        });
-      } catch (err) {
-        list.innerHTML = "<p>خطأ في تحميل الألعاب: " + err.message + "</p>";
-      }
+        playScarySound('gameover');
+        
+        // تفعيل الرعب الشديد
+        document.body.style.animation = 'flashRed 0.00s infinite';
+        mainContainer.style.animation = 'intenseShake 0.0s infinite';
+        
+        // قفزات متتالية
+        let count = 0;
+        const scareInterval = setInterval(() => {
+            if (count < 5) {
+                triggerJumpscare();
+                count++;
+            } else {
+                clearInterval(scareInterval);
+            }
+        }, 2000);
     }
 
-    function escapeHtml(str) {
-      const div = document.createElement("div");
-      div.textContent = str;
-      return div.innerHTML;
-    }
-  </script>
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultEmoji').textContent = emoji;
+}
+// ============================================
+//  بدء اللعبة
+// ============================================
+function startGame() {
+    initAudio();
+    startScreen.style.display = 'none';
+    mainContainer.style.display = 'flex';
+    resultScreen.classList.remove('active');
+    questionArea.style.display = 'flex';
+    
+    currentQuestion = 0;
+    score = 0;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    wrongCount = 0;
+    gameActive = true;
+    
+    
+    scoreDisplay.textContent = '⭐ النقاط: 0';
+    showQuestion(0);
+}
+
+// ============================================
+//  إعادة التشغيل
+// ============================================
+function resetGame() {
+    startScreen.style.display = 'flex';
+    mainContainer.style.display = 'none';
+    resultScreen.classList.remove('active');
+    questionArea.style.display = 'flex';
+    jumpscare.classList.remove('active');
+    
+    gameActive = false;
+    
+    currentQuestion = 0;
+    score = 0;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    wrongCount = 0;
+    
+    document.getElementById('virusIcon').textContent = '👾';
+}
+
+// ============================================
+//  تشغيل الصوت عند التفاعل
+// ============================================
+document.addEventListener('click', initAudio);
+document.addEventListener('touchstart', initAudio);
+
+console.log('💀 الغاز الرعب - 30 سؤال!');
+console.log('⚠️ الأخطاء أكثر من الصح = فيروس!');
+
+</script>
+
 </body>
 </html>
