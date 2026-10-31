@@ -97,10 +97,13 @@
       <h2>➕ ارفع لعبة جديدة</h2>
       <form id="uploadForm">
         <input type="text" id="gameName" placeholder="اسم اللعبة" required>
-        <input type="url" id="gameUrl" placeholder="رابط اللعبة (Itch.io, HTML5, ...)">
+        <input type="url" id="gameUrl" placeholder="رابط اللعبة (اختياري لو رفعت ملف)">
         <textarea id="gameDesc" placeholder="وصف اللعبة" rows="3"></textarea>
-        <input type="file" id="gameFile" accept=".html,.zip">
-        <small>أو ارفع ملف HTML / ZIP مباشرة (اختياري)</small>
+        
+        <!-- هنا هنرفع الملف مباشرة -->
+        <label for="gameFile" style="color:#a29bfe; font-weight:bold;">اختر ملف اللعبة (HTML فقط):</label>
+        <input type="file" id="gameFile" accept=".html">
+        
         <button type="submit">نشر اللعبة</button>
       </form>
     </section>
@@ -120,48 +123,33 @@
       getFirestore, collection, addDoc, getDocs, deleteDoc, doc,
       query, orderBy, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import {
-      getStorage, ref, uploadBytes, getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-    // ⚠️⚠️⚠️ استبدل ده بإعدادات Firebase بتاعتك ⚠️⚠️⚠️
- // Import the functions you need from the SDKs you need
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDTNwE-jwY2b0Wtfi24jNtEfM6uk_42rzM",
-  authDomain: "wnuo-b5c60.firebaseapp.com",
-  projectId: "wnuo-b5c60",
-  storageBucket: "wnuo-b5c60.firebasestorage.app",
-  messagingSenderId: "620044023551",
-  appId: "1:620044023551:web:61851ec63b3510b281beca",
-  measurementId: "G-J6BSLM9C99"
-};
+    // ⚠️⚠️⚠️ إعدادات Firebase بتاعتك (متغيرةاش) ⚠️⚠️⚠️
+    const firebaseConfig = {
+      apiKey: "AIzaSyDTWE-jy2b0Wtfi24jNlEtMGuk_4ZrZM",
+      authDomain: "wnuo-b5c60.firebaseapp.com",
+      projectId: "wnuo-b5c60",
+      storageBucket: "wnuo-b5c60.firebasestorage.app",
+      messagingSenderId: "62004023551",
+      appId: "1:62004023551:web:61851ec6b3b51028beca",
+      measurementId: "G-JGB5LM9C09"
+    };
 
     const ADMIN_EMAIL = "wnuo858@gmail.com";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
     const provider = new GoogleAuthProvider();
 
     let currentUser = null;
 
     window.login = async () => {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (err) {
-        alert("فشل تسجيل الدخول: " + err.message);
-      }
+      try { await signInWithPopup(auth, provider); } 
+      catch (err) { alert("فشل تسجيل الدخول: " + err.message); }
     };
 
-    window.logout = async () => {
-      await signOut(auth);
-    };
+    window.logout = async () => { await signOut(auth); };
 
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
@@ -180,10 +168,12 @@ const firebaseConfig = {
         userArea.innerHTML = `<button onclick="login()">تسجيل الدخول بـ Google</button>`;
         uploadSection.style.display = "none";
       }
-
       loadGames();
     });
 
+    // ============================================
+    //  الرفع الجديد: بيحول ملف الـ HTML لنص ويحفظه
+    // ============================================
     document.getElementById("uploadForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -197,37 +187,55 @@ const firebaseConfig = {
       const desc = document.getElementById("gameDesc").value.trim();
       const file = document.getElementById("gameFile").files[0];
 
-      if (!name || (!url && !file)) {
-        alert("اكتب اسم اللعبة وحط رابط أو ارفع ملف");
+      if (!name) {
+        alert("اكتب اسم اللعبة");
         return;
       }
 
       let finalUrl = url;
+      let fileContent = null;
 
+      // لو المستخدم اختار ملف، بنقراه كـ نص
       if (file) {
         try {
-          const storageRef = ref(storage, `games/${Date.now()}_${file.name}`);
-          await uploadBytes(storageRef, file);
-          finalUrl = await getDownloadURL(storageRef);
+          fileContent = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+            reader.readAsText(file);
+          });
         } catch (err) {
-          alert("فشل رفع الملف: " + err.message);
+          alert("فشل في قراءة الملف: " + err.message);
           return;
         }
       }
 
-      await addDoc(collection(db, "games"), {
-        name,
-        url: finalUrl,
-        description: desc,
-        owner: currentUser.email,
-        createdAt: serverTimestamp()
-      });
+      if (!finalUrl && !fileContent) {
+        alert("حط رابط أو اختار ملف");
+        return;
+      }
 
-      document.getElementById("uploadForm").reset();
-      loadGames();
-      alert("✅ تم نشر اللعبة!");
+      try {
+        await addDoc(collection(db, "games"), {
+          name,
+          url: finalUrl,
+          htmlContent: fileContent, // ده اللي هيخلي اللعبة تشتغل
+          description: desc,
+          owner: currentUser.email,
+          createdAt: serverTimestamp()
+        });
+
+        document.getElementById("uploadForm").reset();
+        loadGames();
+        alert("✅ تم نشر اللعبة بنجاح!");
+      } catch (err) {
+        alert("حدث خطأ أثناء النشر: " + err.message);
+      }
     });
 
+    // ============================================
+    //  عرض الألعاب
+    // ============================================
     async function loadGames() {
       const list = document.getElementById("gamesList");
       list.innerHTML = "جاري التحميل...";
@@ -247,10 +255,19 @@ const firebaseConfig = {
           const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
           const card = document.createElement("div");
           card.className = "game-card";
+          
+          // لو اللعبة مرفوعة كملف، بنفتحها في صفحة جديدة
+          let playLink = g.url;
+          if (g.htmlContent) {
+             // بنحول النص لملف ونشغله
+             const blob = new Blob([g.htmlContent], { type: 'text/html' });
+             playLink = URL.createObjectURL(blob);
+          }
+
           card.innerHTML = `
             <h3>${escapeHtml(g.name)}</h3>
             <p>${escapeHtml(g.description || "لا يوجد وصف")}</p>
-            <a href="${g.url}" target="_blank" rel="noopener">▶ العب الآن</a>
+            ${playLink ? `<a href="${playLink}" target="_blank" rel="noopener">▶ العب الآن</a>` : '<span style="color:red">الملف مش موجود</span>'}
             ${isAdmin ? `<br><button class="delete-btn" data-id="${docSnap.id}">🗑 حذف</button>` : ''}
           `;
           list.appendChild(card);
@@ -274,6 +291,5 @@ const firebaseConfig = {
       return div.innerHTML;
     }
   </script>
-
 </body>
 </html>
